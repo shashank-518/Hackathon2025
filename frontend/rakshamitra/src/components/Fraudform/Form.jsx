@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+
+
+
 function Form() {
   const [formData, setFormData] = useState({
     bankName: '',
@@ -23,11 +26,32 @@ function Form() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form Submitted:', formData);
-    // send formData to server here
+    
+    const formDataToSend = new FormData();
+    for (const key in formData) {
+      formDataToSend.append(key, formData[key]);
+    }
+  
+    try {
+      const response = await fetch('http://localhost:3000/submit', {
+        method: 'POST',
+        body: formDataToSend,
+      });
+  
+      const result = await response.json();
+      if (result.success) {
+        alert('Form submitted and SMS sent successfully!');
+      } else {
+        alert('Error submitting form');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('Something went wrong.');
+    }
   };
+  
 
   return (
     <div style={{
@@ -49,7 +73,7 @@ function Form() {
         flexDirection: 'column',
         gap: '1rem',
       }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2rem', color: '#e16b1a'  }}>Fraud Form</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2rem', color: '#'  }}>Fraud Form</h2>
 
         <input
           type="text"

@@ -1,8 +1,20 @@
-import express from "express"
-import cors from "cors"
+import express from "express";
+import multer from "multer";
+import cors from "cors";
+import { config } from "dotenv";
+import twilio from "twilio";
 
 
 const app = express()
+config();
+
+const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+
+app.use(cors());
+app.use(express.json());
+
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*'); // allow all domains
@@ -14,15 +26,50 @@ app.use((req, res, next) => {
 
 
 app.get("/", (req,res) => {
-    
+
     res.json({ message: 'Hello from server!' });
 })
 
 
+app.post("/submit", upload.fields([
+    { name: "communicationScreenshot", maxCount: 1 },
+    { name: "paymentScreenshot", maxCount: 1 }
+  ]), async (req, res) => {
+    try {
+      const { bankName, ifscCode, branch, address, firCheckbox, bankCheckbox } = req.body;
+  
+      // Compose message
+      const messageBody = `
+  🚨 Fraud Report 🚨
+  Bank Name: ${bankName}
+  IFSC Code: ${ifscCode}
+  Branch: ${branch}
+  Address: ${address}
+  FIR Filed: ${firCheckbox === "true" ? "Yes" : "No"}
+  Bank Informed: ${bankCheckbox === "true" ? "Yes" : "No"}
+      `;
+  
+      
+      const message = await twilioClient.messages.create({
+        body: messageBody,
+        from: process.env.TWILIO_PHONE_NUMBER, 
+        to: process.env.RECEIVER_PHONE_NUMBER, 
+      });
+  
+      console.log('SMS sent:', message.sid);
+  
+      res.status(200).json({ success: true, message: "Form submitted and SMS sent!" });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ success: false, message: "Something went wrong." });
+    }
+  });
 
-const port = process.env.PORT || 3000 
+
+
+const port = process.env.PORT
 
 app.listen(port , () => {
-    console.log("Server is running at port 3000");
+    console.log(`Server is running at port ${port}`);
     
 })
