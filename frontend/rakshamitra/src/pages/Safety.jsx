@@ -1,9 +1,10 @@
 import React from 'react'
+import SafetyForm from '../components/Fraudform/SafetyForm'
 
 const Safety = () => {
   return (
     <div>
-      <h1>Safety</h1>
+      <SafetyForm/>
     </div>
   )
 }
