@@ -45,9 +45,10 @@ app.post("/submit", upload.fields([
   Address: ${address}
   FIR Filed: ${firCheckbox === "true" ? "Yes" : "No"}
   Bank Informed: ${bankCheckbox === "true" ? "Yes" : "No"}
+  Thanks For Contacting
       `;
   
-      
+  
       const message = await twilioClient.messages.create({
         body: messageBody,
         from: process.env.TWILIO_PHONE_NUMBER, 
