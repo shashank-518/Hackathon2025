@@ -3,6 +3,9 @@ import { Routes, Route } from 'react-router-dom';
 import Home from "./pages/Home.jsx";
 import Login from "./components/login";
 import './index.css';
+import Fraud from "./pages/Fraud.jsx";
+import Tip from "./pages/Tip.jsx";
+import Safety from "./pages/Safety.jsx";
 
 
 function App() {
@@ -20,6 +23,9 @@ function App() {
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/Login" element={<Login/>} />
+      <Route path="/Fraud" element={<Fraud/>} />
+      <Route path="/Tip" element={<Tip/>} />
+      <Route path="/Safety" element={<Safety/>} />
 
     </Routes>
 
