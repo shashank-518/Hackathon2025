@@ -26,7 +26,6 @@ app.use((req, res, next) => {
 
 
 app.get("/", (req,res) => {
-
     res.json({ message: 'Hello from server!' });
 })
 
@@ -38,9 +37,8 @@ app.post("/submit", upload.fields([
     try {
       const { bankName, ifscCode, branch, address, firCheckbox, bankCheckbox } = req.body;
   
-      // Compose message
+      
       const messageBody = `
-  🚨 Fraud Report 🚨
   Bank Name: ${bankName}
   IFSC Code: ${ifscCode}
   Branch: ${branch}
