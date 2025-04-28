@@ -1,0 +1,21 @@
+.servicediv{
+    background-color: #0050a0;
+    height: 600px;
+}
+
+.servicediv h1{
+    text-align: center;
+    color: #e16b1a;
+    font-size: 62px;
+    font-weight: 900;
+}
+
+.Cardrow{
+    display: grid;
+    margin-left: 120px;
+    margin-top: 50px;
+    justify-content: space-between;
+    align-items: center;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
