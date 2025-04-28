@@ -3,7 +3,7 @@ import './Card.css'
 
 import { useNavigate } from 'react-router-dom'
 
-const Card = () => {
+const Card = (props) => {
 
     const navigate = useNavigate();
 
@@ -23,13 +23,13 @@ const Card = () => {
   return (
     <div className='card'>
 
-        <h1>Police</h1>
+        <h1>{props.name}</h1>
         <div className='imagecenter'>
-        <img src="https://png.pngtree.com/png-vector/20240910/ourmid/pngtree-policeman-avatar-png-image_13805775.png" alt="" />
+        <img src={props.img} alt="" />
         <ul>
-            <li><button className="carddetails" onClick={handleClick} >Fraud</button></li>
-            <li><button className="carddetails" onClick={handleClick1} >Tip</button></li>
-            <li><button className="carddetails" onClick={handleClick2} >Human Safety</button></li>
+            <li><button className="carddetails" onClick={handleClick} >{props.item1}</button></li>
+            <li><button className="carddetails" onClick={handleClick1} >{props.item2}</button></li>
+            <li><button className="carddetails" onClick={handleClick2} >{props.item3}</button></li>
         </ul>
 
         </div>

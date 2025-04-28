@@ -6,6 +6,7 @@ import './index.css';
 import Fraud from "./pages/Fraud.jsx";
 import Tip from "./pages/Tip.jsx";
 import Safety from "./pages/Safety.jsx";
+import AI from "./pages/AI.jsx";
 
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
       <Route path="/Fraud" element={<Fraud/>} />
       <Route path="/Tip" element={<Tip/>} />
       <Route path="/Safety" element={<Safety/>} />
+      <Route path="/AI" element={<AI/>} />
 
     </Routes>
 

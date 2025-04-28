@@ -49,7 +49,7 @@ function Form() {
         flexDirection: 'column',
         gap: '1rem',
       }}>
-        <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Bank Form</h2>
+        <h2 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2rem', color: '#e16b1a'  }}>Fraud Form</h2>
 
         <input
           type="text"
