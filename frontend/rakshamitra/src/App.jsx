@@ -2,6 +2,7 @@ import React,{useEffect , useState} from "react"
 import { Routes, Route } from 'react-router-dom';
 import Home from "./components/home";
 import Login from "./components/login";
+import './index.css';
 
 
 function App() {
