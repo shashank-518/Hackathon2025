@@ -1,11 +1,12 @@
 import React from 'react'
 import Nav from '../components/Navigation/Nav'
+import TipForm from '../components/Fraudform/TipForm'
 
 const Tip = () => {
   return (
     <div>
         <Nav/>
-        <h1>Tip</h1>
+        <TipForm/>
     </div>
   )
 }

@@ -76,7 +76,8 @@ function SafetyForm() {
       modalTimerRef.current = setTimeout(() => {
         if (!userClickedYes) {
           setShowModal(false);
-          setUserClickedYes(true);
+          setUserCl
+          ickedYes(true);
           sendAlertSms({
             currentLocation: formData.currentLocation,
             destination: formData.destination,

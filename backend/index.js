@@ -3,6 +3,8 @@ import multer from "multer";
 import cors from "cors";
 import { config } from "dotenv";
 import twilio from "twilio";
+import { v4 as uuidv4 } from 'uuid';
+
 
 
 const app = express()
@@ -32,7 +34,7 @@ app.get("/", (req,res) => {
 app.post("/Alertmessage" , async(req,res)=>{
   const {currentLocation, destination, estimatedTime, vehiclePlate } = req.body;
 
-  
+
 
   const messageBody = `ALERT!! Missing.
   Current Location: ${currentLocation}
@@ -56,6 +58,43 @@ try {
 
 
 })
+
+
+app.post('/report', async (req, res) => {
+  const { caseId, location, date, phone, explanation } = req.body;
+
+  if (!phone || !location || !explanation) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  const uniqueCode = uuidv4().split('-')[0].toUpperCase(); 
+
+  console.log(phone)
+
+  // const userMessage = `Crime report received. Your case code is: ${uniqueCode}`;
+  const adminMessage = `New Crime Report\nCase ID: ${caseId || uniqueCode}\nDate: ${date}\nLocation: ${location}\nPhone: ${phone}\nDetails: ${explanation}`;
+
+  try {
+    
+    await twilioClient.messages.create({
+      body: adminMessage,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: process.env.RECEIVER_PHONE_NUMBER,
+    });
+
+    
+    // await twilioClient.messages.create({
+    //   body: adminMessage,
+    //   from: process.env.TWILIO_PHONE_NUMBER,
+    //   to: phone,
+    // });
+
+    res.status(200).json({ success: true, message: 'Report submitted and SMS sent' });
+  } catch (err) {
+    console.error('Twilio Error:', err);
+    res.status(500).json({ error: 'Failed to send SMS' });
+  }
+});
 
 
 app.post("/submit", upload.fields([
