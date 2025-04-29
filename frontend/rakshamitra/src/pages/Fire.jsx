@@ -5,7 +5,6 @@ import FireBri from '../components/Servicess/FireBri'
 const Fire = () => {
   return (
     <div>
-        <h1>Hello</h1>
       <Nav/>
       <FireBri/>
     </div>

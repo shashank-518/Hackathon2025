@@ -20,9 +20,6 @@ app.use(bodyParser.json());
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
-  headers: {
-    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
-  }
   
 });
 
@@ -63,6 +60,35 @@ app.use((req, res, next) => {
 app.get("/", (req,res) => {
     res.json({ message: 'Hello from server!' });
 })
+
+
+app.post('/bookfirebrigade', async (req, res) => {
+  const { location, fireCause, phone, userName } = req.body;
+
+  const message = `
+🚨 Fire Brigade Request 🚒
+
+Name: ${userName}
+Location: ${location}
+Cause: ${fireCause}
+Contact: ${phone}
+`;
+
+  try {
+    await twilioClient.messages.create({
+      body: message,
+      from: process.env.TWILIO_PHONE_NUMBER,
+      to: process.env.RECEIVER_PHONE_NUMBER
+    });
+
+    res.json({ success: true, message: 'Fire brigade alert sent successfully!' });
+  } catch (error) {
+    console.error('Twilio Error:', error);
+    res.status(500).json({ success: false, message: 'Failed to send SMS alert.' });
+  }
+});
+
+
 
 app.post("/Alertmessage" , async(req,res)=>{
   const {currentLocation, destination, estimatedTime, vehiclePlate } = req.body;

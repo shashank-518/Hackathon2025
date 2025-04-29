@@ -30,10 +30,10 @@ const Nav = () => {
      
 
 
-        <div className="authPart">
+        {/* <div className="authPart">
             <button className="login" >Login</button>
             <button className="start" >Get Started</button>
-        </div>
+        </div> */}
 
     
 
