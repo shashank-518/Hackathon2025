@@ -11,6 +11,7 @@ function SafetyForm() {
 
   const [timerSeconds, setTimerSeconds] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [userClickedYes, setUserClickedYes] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -31,6 +32,45 @@ function SafetyForm() {
   };
 
   useEffect(() => {
+    if (showModal) {
+      const timeout = setTimeout(() => {
+        if (!userClickedYes) {
+          sendAlertSms({
+            currentLocation: formData.currentLocation,
+            destination: formData.destination,
+            estimatedTime: formData.estimatedTime,
+            vehiclePlate: formData.plateNumber,
+          });
+        }
+      }, 10000);
+  
+      return () => clearTimeout(timeout);
+    }
+  }, [showModal]);
+
+  const sendAlertSms = async (details) => {
+    try {
+      await fetch('http://localhost:3000/Alertmessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:  JSON.stringify(details),
+      });
+      console.log('Alert SMS sent to my number');
+    } catch (error) {
+      console.error('Error sending SMS:', error);
+    }
+  };
+
+  const handleModalResponse = (response) => {
+    if (response === 'yes') {
+      setUserClickedYes(true);
+      setShowModal(false);
+    }
+  };
+
+
+
+  useEffect(() => {
     let interval = null;
     if (timerSeconds > 0) {
       interval = setInterval(() => {
@@ -39,7 +79,7 @@ function SafetyForm() {
     } else if (timerSeconds === 0) {
       clearInterval(interval);
       playBeepSound();
-      setShowModal(true); // Show modal when timer ends
+      setShowModal(true); 
     }
     return () => clearInterval(interval);
   }, [timerSeconds]);

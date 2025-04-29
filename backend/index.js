@@ -29,6 +29,34 @@ app.get("/", (req,res) => {
     res.json({ message: 'Hello from server!' });
 })
 
+app.post("/Alertmessage" , async(req,res)=>{
+  const {currentLocation, destination, estimatedTime, vehiclePlate } = req.body;
+
+  
+
+  const messageBody = `ALERT!! Missing.
+  Current Location: ${currentLocation}
+  Destination: ${destination}
+  Vehicle Plate: ${vehiclePlate}`;
+
+try {
+  await twilioClient.messages.create({
+    body: messageBody,
+    from: process.env.TWILIO_PHONE_NUMBER,
+    to: process.env.RECEIVER_PHONE_NUMBER,
+  });
+
+  res.status(200).send('Alert SMS sent successfully!');
+} catch (error) {
+  console.error('Twilio Error:', error);
+  res.status(500).send('Failed to send SMS.');
+}
+
+
+
+
+})
+
 
 app.post("/submit", upload.fields([
     { name: "communicationScreenshot", maxCount: 1 },
@@ -55,7 +83,7 @@ app.post("/submit", upload.fields([
         to: process.env.RECEIVER_PHONE_NUMBER, 
       });
   
-      console.log('SMS sent:', message.sid);
+    
   
       res.status(200).json({ success: true, message: "Form submitted and SMS sent!" });
     } catch (error) {
