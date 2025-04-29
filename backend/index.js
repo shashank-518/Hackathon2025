@@ -4,6 +4,8 @@ import cors from "cors";
 import { config } from "dotenv";
 import twilio from "twilio";
 import { v4 as uuidv4 } from 'uuid';
+import OpenAI from 'openai';
+import bodyParser from 'body-parser';
 
 
 
@@ -14,6 +16,20 @@ const twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_A
 
 app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+  headers: {
+    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+  }
+  
+});
+
+console.log(process.env.OPENAI_API_KEY)
+
+
+
 
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -26,6 +42,23 @@ app.use((req, res, next) => {
     next();
   });
 
+
+  
+  app.post('/chat', async (req, res) => {
+    const { message } = req.body;
+  
+    try {
+      const response = await openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: message }],
+      });
+  
+      res.json({ reply: response.choices[0].message.content });
+    } catch (error) {
+      console.error('Error from OpenAI:', error);
+      res.status(500).json({ error: 'Failed to get response from OpenAI' });
+    }
+  });
 
 app.get("/", (req,res) => {
     res.json({ message: 'Hello from server!' });
@@ -72,7 +105,7 @@ app.post('/report', async (req, res) => {
   console.log(phone)
 
   // const userMessage = `Crime report received. Your case code is: ${uniqueCode}`;
-  const adminMessage = `New Crime Report\nCase ID: ${caseId || uniqueCode}\nDate: ${date}\nLocation: ${location}\nPhone: ${phone}\nDetails: ${explanation}`;
+  const adminMessage = `New Crime Report\nCase ID: ${caseId || uniqueCode}\nDate: ${date}\nLocation: ${location}\nPhone: ${phone}\nDetails: ${explanation} \nCode:`;
 
   try {
     

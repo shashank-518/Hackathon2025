@@ -8,15 +8,16 @@ const Card = (props) => {
     const navigate = useNavigate();
 
     const handleClick = () => {
-        navigate('/Fraud'); 
+      navigate(`/${props.item1}`);
       };
 
       const handleClick1 = () => {
-        navigate('/Tip'); 
+        navigate(`/${props.item2}`);
+ 
       };
 
       const handleClick2 = () => {
-        navigate('/Safety'); 
+        navigate(`/${props.item3}`);
       };
 
 

@@ -7,6 +7,7 @@ import Fraud from "./pages/Fraud.jsx";
 import Tip from "./pages/Tip.jsx";
 import Safety from "./pages/Safety.jsx";
 import AI from "./pages/AI.jsx";
+import Fire from "./pages/Fire.jsx";
 
 
 function App() {
@@ -28,6 +29,10 @@ function App() {
       <Route path="/Tip" element={<Tip/>} />
       <Route path="/Safety" element={<Safety/>} />
       <Route path="/AI" element={<AI/>} />
+      <Route path="/Call" element={<AI/>} />
+      <Route path="/Notify" element={<AI/>} />
+      <Route path="/Location" element={<Fire/>} />
+
 
     </Routes>
 
