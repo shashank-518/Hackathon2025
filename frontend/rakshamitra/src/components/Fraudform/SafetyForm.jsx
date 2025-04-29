@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useRef } from 'react';
 
 function SafetyForm() {
   const [formData, setFormData] = useState({
@@ -12,6 +12,7 @@ function SafetyForm() {
   const [timerSeconds, setTimerSeconds] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [userClickedYes, setUserClickedYes] = useState(false);
+  const modalTimerRef = useRef(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -27,7 +28,7 @@ function SafetyForm() {
     const totalSeconds = (hours * 3600) + (minutes * 60);
 
     if (totalSeconds > 0) {
-      setTimerSeconds(totalSeconds);
+      setTimerSeconds(totalSeconds * 0.1);
     }
   };
 
@@ -65,9 +66,30 @@ function SafetyForm() {
     if (response === 'yes') {
       setUserClickedYes(true);
       setShowModal(false);
+      clearTimeout(modalTimerRef.current);
+      
     }
   };
 
+  useEffect(() => {
+    if (showModal) {
+      modalTimerRef.current = setTimeout(() => {
+        if (!userClickedYes) {
+          setShowModal(false);
+          setUserClickedYes(true);
+          sendAlertSms({
+            currentLocation: formData.currentLocation,
+            destination: formData.destination,
+            estimatedTime: formData.estimatedHours + 'h ' + formData.estimatedMinutes + 'm',
+            vehiclePlate: formData.plateNumber,
+          });
+          alert("Submitted")
+        }
+      }, 10000);
+    }
+    return () => clearTimeout(modalTimerRef.current);
+  }, [showModal]);
+  
 
 
   useEffect(() => {
@@ -111,15 +133,30 @@ function SafetyForm() {
     <>
     
     
-    <div style={{ padding: '2rem', maxWidth: '500px', margin: 'auto' }}>
-      <h2>Travel Details Form</h2>
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <div style={{background: 'linear-gradient(to bottom right, #e0e0e0, #f0f0f0)',
+      minHeight: '100vh',
+      display: 'flex',
+      flexDirection : 'column',
+      justifyContent: 'center',
+      alignItems: 'center', }}>
+      <form onSubmit={handleSubmit} style={{ backgroundColor: '#0d3b3b',
+        padding: '2rem',
+        borderRadius: '10px',
+        boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.3)',
+        width: '100%',
+        maxWidth: '500px',
+        color: '#fff',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '1rem', }}>
+          <h2 style={{ textAlign: 'center', marginBottom: '1rem', fontSize: '2rem', color: '#'  }} >Travel Details Form</h2>
         <input
           type="text"
           name="currentLocation"
           placeholder="Current Location"
           value={formData.currentLocation}
           onChange={handleChange}
+          style={inputStyle}
           required
         />
         <input
@@ -128,6 +165,7 @@ function SafetyForm() {
           placeholder="Destination"
           value={formData.destination}
           onChange={handleChange}
+          style={inputStyle}
           required
         />
         <div style={{ display: 'flex', gap: '1rem' }}>
@@ -137,6 +175,7 @@ function SafetyForm() {
             placeholder="Hours"
             value={formData.estimatedHours}
             onChange={handleChange}
+            style={inputStyle}
             min="0"
           />
           <input
@@ -147,6 +186,7 @@ function SafetyForm() {
             onChange={handleChange}
             min="0"
             max="59"
+            style={inputStyle}
           />
         </div>
         <input
@@ -155,18 +195,39 @@ function SafetyForm() {
           placeholder="Vehicle Plate Number"
           value={formData.plateNumber}
           onChange={handleChange}
+          style={inputStyle}
           required
         />
 
-        <button type="submit">Submit</button>
+        <button type="submit" style={buttonStyle} >Submit</button>
       </form>
 
       {timerSeconds !== null && (
-        <div style={{ marginTop: '2rem', fontSize: '1.5rem', textAlign: 'center' }}>
-          <p>Countdown Timer:</p>
-          <p style={{ fontWeight: 'bold' }}>{formatTime(timerSeconds)}</p>
-        </div>
-      )}
+  <div style={{
+    marginTop: '3rem',
+    textAlign: 'center',
+    background: '#0d3b3b',
+    color: '#ffffff',
+    padding: '2rem',
+    borderRadius: '15px',
+    boxShadow: '0 4px 15px rgba(0, 0, 0, 0.2)',
+    fontFamily: 'Arial, sans-serif',
+    maxWidth: '400px',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  }}>
+    <p style={{ fontSize: '1.2rem', marginBottom: '1rem', opacity: 0.9 }}>⏳ Countdown Timer:</p>
+    <p style={{
+      fontWeight: 'bold',
+      fontSize: '2.5rem',
+      letterSpacing: '2px',
+      textShadow: '0 0 10px #ffffff, 0 0 20px #ffffff',
+    }}>
+      {formatTime(timerSeconds)}
+    </p>
+  </div>
+)}
+
     </div>
 
 
@@ -208,6 +269,26 @@ const modalButtonStyle = {
     fontSize: '1rem',
     cursor: 'pointer',
   };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '0.5rem',
+    borderRadius: '5px',
+    border: '1px solid #ccc',
+    backgroundColor: '#f0f0f0',
+    color: '#000',
+  };
+
+  const buttonStyle = {
+    backgroundColor: '#029e9d',
+    border: 'none',
+    padding: '0.7rem',
+    borderRadius: '5px',
+    color: '#fff',
+    cursor: 'pointer',
+    fontWeight: 'bold',
+  };
+  
 
 
 
