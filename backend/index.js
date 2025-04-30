@@ -223,7 +223,7 @@ app.post('/report', async (req, res) => {
   console.log(phone)
 
   // const userMessage = `Crime report received. Your case code is: ${uniqueCode}`;
-  const adminMessage = `New Crime Report\nCase ID: ${caseId || uniqueCode}\nDate: ${date}\nLocation: ${location}\nPhone: ${phone}\nDetails: ${explanation} \nCode:`;
+  const adminMessage = `New Crime Report\nCase ID: ${caseId || uniqueCode}\nDate: ${date}\nLocation: ${location}\nPhone: ${phone}\nDetails: ${explanation} \nCode:${uniqueCode}`;
 
   try {
     

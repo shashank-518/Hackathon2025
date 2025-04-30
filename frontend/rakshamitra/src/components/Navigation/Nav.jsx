@@ -1,6 +1,6 @@
 import React from 'react'
 import './Navigation.css'
-import MyImage from '../../../public/raksha.jpg'
+import MyImage from '../../../public/mitra.jpg'
 
 const Nav = () => {
   return (
