@@ -4,7 +4,7 @@ import Card from './Card'
 
 const Service = () => {
   return (
-    <div className='servicediv'>
+    <div className='servicediv' id='#service'>
       <h1>SEVA</h1>
 
       <div className='Cardrow' >

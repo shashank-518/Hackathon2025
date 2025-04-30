@@ -118,6 +118,33 @@ app.use((req, res, next) => {
   
     res.json(response);
   });
+
+  app.post('/sendlocation', async (req, res) => {
+    const { location, hospitals } = req.body;
+
+    console.log(location);
+    console.log(hospitals);
+    
+  
+    if (!location || !hospitals || hospitals.length === 0) {
+      return res.status(400).json({ error: 'Missing location or hospitals' });
+    }
+  
+    const text = `🚑 Alert: Patient wants to book an ambulance of:\n\n${hospitals.join(', ')}\n\nLocation: https://maps.google.com/?q=${location.lat},${location.lon}`;
+  
+    try {
+      await twilioClient.messages.create({
+        body: text,
+        from: process.env.TWILIO_PHONE_NUMBER,
+        to: process.env.RECEIVER_PHONE_NUMBER,
+      });
+  
+      res.json({ success: true });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: 'Failed to send SMS' });
+    }
+  });
   
   
 
@@ -191,6 +218,7 @@ app.post('/report', async (req, res) => {
   }
 
   const uniqueCode = uuidv4().split('-')[0].toUpperCase(); 
+
 
   console.log(phone)
 
