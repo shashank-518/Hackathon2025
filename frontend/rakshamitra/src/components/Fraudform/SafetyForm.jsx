@@ -67,7 +67,6 @@ function SafetyForm() {
       setUserClickedYes(true);
       setShowModal(false);
       clearTimeout(modalTimerRef.current);
-      
     }
   };
 

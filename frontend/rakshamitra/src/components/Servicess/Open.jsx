@@ -1,116 +1,83 @@
 import { useState } from 'react';
-import axios from 'axios';
+import './Open.css'; 
 
 function Open() {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [symptoms, setSymptoms] = useState('');
+  const [age, setAge] = useState('');
+  const [aiResponse, setAiResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const sendMessage = async () => {
-    if (!input.trim()) return;
-
-    const userMessage = { role: 'user', content: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('')
-
+  const handleSubmit = async () => {
+    setLoading(true);
     try {
-      const response = await axios.post('http://localhost:3000/chat', {
-        message: input,
+      const res = await fetch('http://localhost:3000/triage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symptoms, age }),
       });
 
-      const botMessage = { role: 'bot', content: response.data.reply };
-      setMessages((prev) => [...prev, botMessage]);
-      setInput('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
-  };
+      if (!res.ok) throw new Error('Network response was not ok');
 
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      sendMessage();
+      const data = await res.json();
+      setAiResponse(data); // Set both urgency and advice from backend response
+    } catch (err) {
+      console.error(err);
+      setAiResponse({
+        urgency: 'LOW',
+        advice: 'Something went wrong. Please try again later.',
+      });
     }
+    setLoading(false);
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.chatBox}>
-        {messages.map((msg, index) => (
-          <div
-            key={index}
-            style={{
-              ...styles.message,
-              alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start',
-              backgroundColor: msg.role === 'user' ? '#4caf50' : '#2196f3',
-            }}
-          >
-            {msg.content}
-          </div>
-        ))}
-      </div>
+    <div className="triage-container">
+      <div className="triage-card">
+        <h2 className="triage-title">🚑 AI Ambulance Triage Assistant</h2>
 
-      <div style={styles.inputBox}>
+        <label>Patient Age</label>
         <input
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyPress}
-          placeholder="Type your message..."
-          style={styles.input}
+          type="number"
+          className="triage-input"
+          placeholder="Enter patient's age"
+          value={age}
+          onChange={(e) => setAge(e.target.value)}
         />
-        <button onClick={sendMessage} style={styles.button}>Send</button>
+
+        <label>Describe Symptoms</label>
+        <textarea
+          className="triage-textarea"
+          rows={4}
+          placeholder="E.g., chest pain, shortness of breath..."
+          value={symptoms}
+          onChange={(e) => setSymptoms(e.target.value)}
+        />
+
+        <button
+          onClick={handleSubmit}
+          disabled={loading}
+          className="triage-button"
+        >
+          {loading ? 'Analyzing...' : 'Get Triage Advice'}
+        </button>
+
+        {aiResponse && (
+          <div className="triage-response">
+            <div className="response-item">
+              <strong>Urgency Level:</strong>
+              <span className="urgency-level">{aiResponse.urgency}</span>
+            </div>
+            <div className="response-item">
+              <strong>Advice:</strong>
+              <p className="advice-text">{aiResponse.advice}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    height: '80vh',
-    backgroundColor: '#f0f2f5',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '10px',
-  },
-  chatBox: {
-    flex: 1,
-    width: '100%',
-    maxWidth: '600px',
-    overflowY: 'auto',
-    display: 'flex',
-    flexDirection: 'column',
-    padding: '10px',
-    gap: '10px',
-    marginBottom: '10px',
-  },
-  message: {
-    padding: '10px 15px',
-    borderRadius: '20px',
-    color: '#fff',
-    maxWidth: '80%',
-  },
-  inputBox: {
-    display: 'flex',
-    width: '100%',
-    maxWidth: '600px',
-    gap: '10px',
-  },
-  input: {
-    flex: 1,
-    padding: '10px',
-    borderRadius: '20px',
-    border: '1px solid #ccc',
-    outline: 'none',
-  },
-  button: {
-    padding: '10px 20px',
-    backgroundColor: '#4caf50',
-    color: '#fff',
-    border: 'none',
-    borderRadius: '20px',
-    cursor: 'pointer',
-  },
-};
 
 export default Open;

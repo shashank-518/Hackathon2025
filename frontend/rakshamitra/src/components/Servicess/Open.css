@@ -1,0 +1,85 @@
+/* General styling for container */
+.triage-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f7fafc;
+  }
+  
+  /* Card styling */
+  .triage-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+  }
+  
+  /* Title */
+  .triage-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #0070c0;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  /* Input and textarea styling */
+  .triage-input,
+  .triage-textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 16px;
+  }
+  
+  /* Button styling */
+  .triage-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #0070c0;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .triage-button:disabled {
+    background-color: #bbb;
+    cursor: not-allowed;
+  }
+  
+  .triage-button:hover:not(:disabled) {
+    background-color: #005fa3;
+  }
+  
+  /* Response styling */
+  .triage-response {
+    background-color: #f0f8ff;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #0070c0;
+  }
+  
+  .response-item {
+    margin-bottom: 10px;
+  }
+  
+  .urgency-level {
+    font-weight: bold;
+    font-size: 18px;
+    color: #0070c0;
+  }
+  
+  .advice-text {
+    font-size: 14px;
+    color: #333;
+  }
+  

@@ -23,7 +23,6 @@ const openai = new OpenAI({
   
 });
 
-console.log(process.env.OPENAI_API_KEY)
 
 
 
@@ -41,21 +40,86 @@ app.use((req, res, next) => {
 
 
   
-  app.post('/chat', async (req, res) => {
-    const { message } = req.body;
+  app.post('/triage', (req, res) => {
+    const { symptoms, age } = req.body;
+    const input = symptoms.toLowerCase();
   
-    try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [{ role: 'user', content: message }],
-      });
+    const triageRules = [
+      {
+        keywords: ['chest pain', 'shortness of breath', 'tightness'],
+        urgency: 'HIGH',
+        advice: 'Possible heart attack. Administer aspirin if available. Keep patient calm and upright. Call emergency services immediately.',
+      },
+      {
+        keywords: ['unconscious', 'no response', 'fainting'],
+        urgency: 'HIGH',
+        advice: 'Check for breathing and pulse. Begin CPR if necessary. Call emergency services immediately.',
+      },
+      {
+        keywords: ['bleeding', 'open wound', 'blood loss'],
+        urgency: 'HIGH',
+        advice: 'Apply pressure to stop bleeding. Use a clean cloth or bandage. Elevate the wound if possible.',
+      },
+      {
+        keywords: ['seizure', 'convulsions'],
+        urgency: 'HIGH',
+        advice: 'Do not restrain the person. Move objects away. Turn them on their side. Call emergency services.',
+      },
+      {
+        keywords: ['fever', 'chills', 'cough'],
+        urgency: 'MODERATE',
+        advice: 'Monitor temperature. Provide fluids and rest. Seek medical attention if symptoms persist beyond 2 days.',
+      },
+      {
+        keywords: ['headache', 'blurred vision', 'nausea'],
+        urgency: 'MODERATE',
+        advice: 'May indicate migraine or concussion. Keep patient in a quiet, dark room. Monitor for worsening symptoms.',
+      },
+      {
+        keywords: ['minor cut', 'scrape', 'bruise'],
+        urgency: 'LOW',
+        advice: 'Clean with antiseptic. Apply a bandage. Monitor for signs of infection.',
+      },
+      {
+        keywords: ['vomiting', 'diarrhea', 'stomach ache'],
+        urgency: 'MODERATE',
+        advice: 'Keep patient hydrated. Avoid solid foods initially. Seek help if symptoms last more than 24 hours.',
+      },
+      {
+        keywords: ['difficulty breathing', 'asthma'],
+        urgency: 'HIGH',
+        advice: 'Use inhaler if available. Keep patient upright. Seek emergency care immediately.',
+      },
+      {
+        keywords: ['burn', 'scald', 'blister'],
+        urgency: 'MODERATE',
+        advice: 'Cool with running water for 20 minutes. Do not apply ice. Cover with a sterile dressing.',
+      },
+    ];
   
-      res.json({ reply: response.choices[0].message.content });
-    } catch (error) {
-      console.error('Error from OpenAI:', error);
-      res.status(500).json({ error: 'Failed to get response from OpenAI' });
+    let matched = null;
+  
+    for (let rule of triageRules) {
+      if (rule.keywords.some(keyword => input.includes(keyword))) {
+        matched = rule;
+        break;
+      }
     }
+  
+    const response = matched
+      ? {
+          urgency: matched.urgency,
+          advice: matched.advice,
+        }
+      : {
+          urgency: 'LOW',
+          advice: 'No critical symptoms detected. Monitor the patient and follow up with a doctor if symptoms persist.',
+        };
+  
+    res.json(response);
   });
+  
+  
 
 app.get("/", (req,res) => {
     res.json({ message: 'Hello from server!' });
